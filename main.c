@@ -25,6 +25,14 @@ int main(int argc, char *argv[], char *envp[])
 	char *args[64]; /* Array for command and arguments */
 	int i;
 	int cmd_count = 1;
+	char **env;
+	char *cmd;
+	char *path;
+	char *path_copy;
+	char *dir;
+	char full_path[1024];
+
+	(void)argc;
 
 	while (1)
 	{
@@ -66,24 +74,23 @@ int main(int argc, char *argv[], char *envp[])
 		}
 		else if (strcmp(args[0], "env") == 0)
 		{
-			for (char **env = envp; *env != NULL; env++)
+			for (env = envp; *env != NULL; env++)
 				printf("%s\n", *env);
 			cmd_count++;
 			continue;
 		}
 
 		/* Handle PATH */
-		char *cmd = args[0];
+		cmd = args[0];
 		if (strchr(cmd, '/') == NULL)
 		{
-			char *path = getenv("PATH");
+			path = getenv("PATH");
 			if (path != NULL)
 			{
-				char *path_copy = strdup(path);
-				char *dir = strtok(path_copy, ":");
+				path_copy = strdup(path);
+				dir = strtok(path_copy, ":");
 				while (dir != NULL)
 				{
-					char full_path[1024];
 					snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
 					if (access(full_path, X_OK) == 0)
 					{
