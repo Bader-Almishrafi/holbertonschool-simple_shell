@@ -35,7 +35,7 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argc;
 
 	while (1)
-	{
+	{/*   Parent process */
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
 
@@ -159,5 +159,5 @@ int main(int argc, char *argv[], char *envp[])
 	}
 
 	free(line);
-	return (last_status);/*   Parent process */
+	return (last_status)
 }
