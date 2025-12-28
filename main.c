@@ -70,7 +70,7 @@ int main(int argc, char *argv[], char *envp[])
 		if (strcmp(args[0], "exit") == 0)
 		{
 			free(line);
-			exit(0);
+			exit(last_status);
 		}
 		else if (strcmp(args[0], "env") == 0)
 		{
