@@ -155,7 +155,7 @@ int main(int argc, char *argv[], char *envp[])
 			if (WIFEXITED(status))
 				last_status = WEXITSTATUS(status);
 			cmd_count++;
-		}/*   Parent process */
+		}
 	}
 
 	free(line);
