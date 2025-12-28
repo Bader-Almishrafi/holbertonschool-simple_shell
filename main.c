@@ -85,6 +85,7 @@ int main(int argc, char *argv[], char *envp[])
 		cmd = args[0];
 		if (strchr(cmd, '/') == NULL)
 		{
+			int found = 0;
 			/* Get PATH from environment */
 			path = NULL;
 			for (env = envp; *env != NULL; env++)
@@ -105,11 +106,20 @@ int main(int argc, char *argv[], char *envp[])
 					if (access(full_path, X_OK) == 0)
 					{
 						args[0] = full_path;
+						found = 1;
 						break;
 					}
 					dir = strtok(NULL, ":");
 				}
 				free(path_copy);
+			}
+			if (!found)
+			{
+				/* Command not in PATH, treat as not found */
+				fprintf(stderr, "%s: %d: %s: not found\n", argv[0], cmd_count, cmd);
+				cmd_count++;
+				last_status = 127;
+				continue;
 			}
 		}
 
