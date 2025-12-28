@@ -103,6 +103,14 @@ int main(int argc, char *argv[], char *envp[])
 			}
 		}
 
+		/* Check if command exists before forking */
+		if (access(args[0], X_OK) != 0)
+		{
+			fprintf(stderr, "%s: %d: %s: not found\n", argv[0], cmd_count, cmd);
+			cmd_count++;
+			continue;
+		}
+
 		pid = fork();
 		if (pid == -1)
 		{
