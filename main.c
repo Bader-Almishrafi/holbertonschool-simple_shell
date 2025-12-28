@@ -22,7 +22,7 @@ int main(int argc, char *argv[], char *envp[])
 	pid_t pid;
 	int status;
 	char *token;
-	char *args[64]; /* Array for command and arguments */
+	char *args[64]; /* Array for command and arguments  */
 	int i;
 	int cmd_count = 1;
 	char **env;
@@ -101,14 +101,6 @@ int main(int argc, char *argv[], char *envp[])
 				}
 				free(path_copy);
 			}
-		}
-
-		/* Check if command exists before forking */
-		if (access(args[0], X_OK) != 0)
-		{
-			fprintf(stderr, "%s: %d: %s: not found\n", argv[0], cmd_count, cmd);
-			cmd_count++;
-			continue;
 		}
 
 		pid = fork();
