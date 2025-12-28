@@ -20,7 +20,7 @@ int main(int argc, char *argv[], char *envp[])
 	size_t len = 0;
 	ssize_t read;
 	pid_t pid;
-	int status;
+	int status, last_status = 0;
 	char *token;
 	char *args[64]; /* Array for command and arguments  */
 	int i;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[], char *envp[])
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			free(line);
-			exit(0);
+			exit(last_status);
 		}
 
 		/* Remove newline */
@@ -77,6 +77,7 @@ int main(int argc, char *argv[], char *envp[])
 			for (env = envp; *env != NULL; env++)
 				printf("%s\n", *env);
 			cmd_count++;
+			last_status = 0;
 			continue;
 		}
 
@@ -112,10 +113,20 @@ int main(int argc, char *argv[], char *envp[])
 			}
 		}
 
+		/* Check if command exists before forking */
+		if (access(args[0], X_OK) != 0)
+		{
+			fprintf(stderr, "%s: %d: %s: not found\n", argv[0], cmd_count, cmd);
+			cmd_count++;
+			last_status = 127;
+			continue;
+		}
+
 		pid = fork();
 		if (pid == -1)
 		{
 			perror(argv[0]);
+			last_status = 1;
 			continue;
 		}
 		if (pid == 0)
@@ -131,10 +142,12 @@ int main(int argc, char *argv[], char *envp[])
 		{
 			/* Parent process */
 			wait(&status);
+			if (WIFEXITED(status))
+				last_status = WEXITSTATUS(status);
 			cmd_count++;
 		}
 	}
 
 	free(line);
-	return (0);
+	return (last_status);
 }
