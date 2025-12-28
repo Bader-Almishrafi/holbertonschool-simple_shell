@@ -84,7 +84,16 @@ int main(int argc, char *argv[], char *envp[])
 		cmd = args[0];
 		if (strchr(cmd, '/') == NULL)
 		{
-			path = getenv("PATH");
+			/* Get PATH from environment */
+			path = NULL;
+			for (env = envp; *env != NULL; env++)
+			{
+				if (strncmp(*env, "PATH=", 5) == 0)
+				{
+					path = *env + 5;
+					break;
+				}
+			}
 			if (path != NULL)
 			{
 				path_copy = strdup(path);
